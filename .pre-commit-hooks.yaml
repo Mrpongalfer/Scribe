@@ -1,0 +1,22 @@
+# Scribe trust gate as a pre-commit hook.
+#
+# Requires scribe-gate with its tools installed in the environment that runs
+# pre-commit:
+#
+#     pip install "scribe-gate[tools]"
+#
+# Add to your .pre-commit-config.yaml:
+#
+#     - repo: https://github.com/Mrpongalfer/scribe
+#       rev: v0.1.0
+#       hooks:
+#         - id: scribe-gate
+#
+- id: scribe-gate
+  name: scribe trust gate (review-only)
+  description: Run the Scribe validation gauntlet in review-only mode on changed Python files.
+  entry: scribe-gate
+  language: system
+  types: [python]
+  args: [--review-only, --files]
+  pass_filenames: true

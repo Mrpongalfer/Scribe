@@ -1,0 +1,45 @@
+name: scribe-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install scribe-gate with dev + tools
+        run: pip install -e ".[dev,tools]"
+
+      - name: Lint (ruff)
+        run: |
+          ruff check src tests
+          ruff format --check src tests
+
+      - name: Type check (mypy)
+        run: mypy src
+
+      - name: Unit + e2e tests
+        run: pytest -q
+
+      - name: Dogfood — Scribe validates itself
+        run: |
+          scribe . --review-only \
+            --files $(git ls-files 'src/*.py') \
+            --config .scribe-ci.toml \
+            --report-format json \
+            --report-file scribe-report.json \
+            --log-level WARNING
+
+      - name: Upload Scribe report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scribe-report
+          path: scribe-report.json

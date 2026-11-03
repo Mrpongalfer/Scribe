@@ -1,0 +1,11 @@
+# Config used by CI to dogfood Scribe on itself.
+# Deterministic steps only: no venv creation, no network installs, no LLM.
+# (LLM-backed steps are covered by the unit/e2e tests with a stubbed backend.)
+validation_steps = [
+    "validate_inputs",
+    "apply_code",
+    "format_code",
+    "lint_code",
+    "type_check",
+    "generate_report",
+]
