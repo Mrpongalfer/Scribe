@@ -12,6 +12,13 @@ without explicit operator approval.
 agent writes code ──▶ SCRIBE ──▶ ✅ report + optional commit
                               ──▶ ❌ report, pipeline halts
 ```
+AI coding agents write code fast — and wrong in ways that look right. Existing
+guardrails either auto-fix what they find (hiding the problem from you) or run
+a single linter and call it done. Scribe is the gate between the agent and the
+commit: a deterministic gauntlet that checks the code, reports honestly, and
+never touches it. Built for anyone running coding agents — local or API — who
+wants proof, not vibes, before code lands.
+
 
 ## Install
 
