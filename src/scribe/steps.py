@@ -151,17 +151,34 @@ class WorkflowSteps:
                 "stderr_summary": self._truncate(result.stderr),
             }
         vulns: list[dict] = []
-        for entry in payload.get("vulnerabilities", []):
+        # Current pip-audit JSON nests findings under "dependencies".
+        for entry in payload.get("dependencies", []):
+            pkg_label = f"{entry.get('name')}=={entry.get('version')}"
             for vuln in entry.get("vulns", []):
                 vulns.append(
                     {
-                        "package": entry.get("spec"),
+                        "package": pkg_label,
                         "id": vuln.get("id"),
                         "aliases": vuln.get("aliases", []),
                         "fix_versions": vuln.get("fix_versions", []),
                         "description": (vuln.get("description") or "")[:500],
                     }
                 )
+        # Older pip-audit JSON used a top-level "vulnerabilities" list
+        # of per-package entries with "spec" and nested "vulns".
+        for entry in payload.get("vulnerabilities", []):
+            nested = entry.get("vulns")
+            if isinstance(nested, list):
+                for vuln in nested:
+                    vulns.append(
+                        {
+                            "package": entry.get("spec"),
+                            "id": vuln.get("id"),
+                            "aliases": vuln.get("aliases", []),
+                            "fix_versions": vuln.get("fix_versions", []),
+                            "description": (vuln.get("description") or "")[:500],
+                        }
+                    )
         details["vulnerability_count"] = len(vulns)
         details["vulnerabilities"] = vulns
         self.agent.report_data["audit_findings"] = vulns
