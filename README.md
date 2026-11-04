@@ -23,14 +23,18 @@ wants proof, not vibes, before code lands.
 ## Install
 
 ```bash
-pip install scribe-gate
+pip install git+https://github.com/Mrpongalfer/Scribe.git
 # with the gauntlet tools (ruff, mypy, pytest, pip-audit, pre-commit):
-pip install "scribe-gate[tools]"
+pip install "scribe-gate[tools] @ git+https://github.com/Mrpongalfer/Scribe.git"
+
 ```
 
 Requires Python 3.10+.
 
 ## Quickstart
+
+(PyPI release coming — for now, install from source.)
+
 
 **Review a file in place** (no changes, no commit — the safest first run):
 
