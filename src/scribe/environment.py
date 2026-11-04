@@ -189,8 +189,11 @@ class EnvironmentManager:
                 self._logger.warning("Could not install pip-audit; audit may fail.")
         except ScribeToolError as exc:
             self._logger.warning("pip-audit install raised: %s", exc)
+        pip_audit = self.find_venv_executable("pip-audit")
+        if pip_audit is None:
+            raise ScribeEnvironmentError("pip-audit is not available in the venv.")
         return self._tool_runner.run_tool(
-            [str(pip), "audit", "--format", "json", "--progress-spinner", "off"],
+            [str(pip_audit), "--format", "json", "--progress-spinner", "off"],
             cwd=self._target_dir,
             venv_path=self._venv_path,
             timeout=timeout,
