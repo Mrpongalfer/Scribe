@@ -101,8 +101,7 @@ class ScribeAgent:
         if not target_dir.is_dir():
             raise ScribeInputError(f"Target dir is not a directory: {target_dir}")
         allowed = [
-            Path(p).expanduser().resolve()
-            for p in self.config.get_list("allowed_target_bases", [])
+            Path(p).expanduser().resolve() for p in self.config.get_list("allowed_target_bases", [])
         ]
         if allowed and not any(target_dir.is_relative_to(base) for base in allowed):
             raise ScribeInputError(
