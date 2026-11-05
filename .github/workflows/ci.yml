@@ -31,8 +31,8 @@ jobs:
       - name: Dogfood — Scribe validates itself
         run: |
           scribe . --review-only \
-            --files $(git ls-files 'src/*.py') \
-            --config .scribe-ci.toml \
+            --files $(git ls-files 'src/scribe/*.py') \
+            --config-file .scribe-ci.toml \
             --report-format json \
             --report-file scribe-report.json \
             --log-level WARNING

@@ -101,10 +101,10 @@ class ScribeAgent:
         if not target_dir.is_dir():
             raise ScribeInputError(f"Target dir is not a directory: {target_dir}")
         allowed = [
-            str(Path(p).expanduser().resolve())
+            Path(p).expanduser().resolve()
             for p in self.config.get_list("allowed_target_bases", [])
         ]
-        if allowed and not any(str(target_dir).startswith(base) for base in allowed):
+        if allowed and not any(target_dir.is_relative_to(base) for base in allowed):
             raise ScribeInputError(
                 f"Target dir '{target_dir}' is outside allowed bases: {allowed}. "
                 "Adjust 'allowed_target_bases' in scribe.toml to permit it."
@@ -206,6 +206,11 @@ class ScribeAgent:
                 break
 
             if step_name == "run_precommit" and self._review_only:
+                self._record_custom(
+                    step_name, STATUS_SKIPPED, {"message": "Skipped (--review-only)."}
+                )
+                continue
+            if step_name in {"generate_tests", "save_tests", "execute_tests"} and self._review_only:
                 self._record_custom(
                     step_name, STATUS_SKIPPED, {"message": "Skipped (--review-only)."}
                 )
